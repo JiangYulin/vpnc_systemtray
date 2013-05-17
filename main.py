@@ -25,7 +25,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
     def connectVPN(self):
 			flag = os.path.isfile('/var/run/vpnc/pid')
 			if flag:
-					self.iconMenu.removeAction(self.appconnect)
+					self.Menu.removeAction(self.appconnect)
 					self.appdisconnected = self.Menu.addAction('Disconnect')
 					self.connect(self.appdisconnected,QtCore.SIGNAL('triggered()'),self.disconnected)
 			else:
