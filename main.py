@@ -4,7 +4,7 @@ import os
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-
+iconPath = './icon.png'
 class SystemTrayIcon(QtGui.QSystemTrayIcon):
     appexit = None
     appconnect = None
@@ -12,10 +12,9 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 
     def __init__(self, parent=None):
         QtGui.QSystemTrayIcon.__init__(self, parent)
-        self.setIcon(QtGui.QIcon("icon.png"))
+        self.setIcon(QtGui.QIcon(iconPath))
         self.Menu = QtGui.QMenu(parent)
         self.appconnect = self.Menu.addAction("Connect")
-        self.appconnect.setIcon(QtGui.QIcon('./connect-icon.png'))
         self.appexit = self.Menu.addAction("Exit")
         self.setContextMenu(self.Menu)
         self.connect(self.appconnect,QtCore.SIGNAL('triggered()'),self.connectVPN)
