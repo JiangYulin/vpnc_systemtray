@@ -1,10 +1,13 @@
 #!/usr/bin/env python2
 import sys
 import os
+import threading
+
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 iconPath = './icon.png'
+
 class SystemTrayIcon(QtGui.QSystemTrayIcon):
     appexit = None
     appconnect = None
@@ -17,17 +20,22 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         self.appconnect = self.Menu.addAction("Connect")
         self.appexit = self.Menu.addAction("Exit")
         self.setContextMenu(self.Menu)
-        self.connect(self.appconnect,QtCore.SIGNAL('triggered()'),self.connectVPN)
+        self.appconnect.triggered.connect(lambda:self._fork(self.connectVPN))
+        #self.connect(self.appconnect,QtCore.SIGNAL('triggered()'),self._fork('self.connectVPN'))
         self.connect(self.appexit,QtCore.SIGNAL('triggered()'),self.appExit)
         self.show()
+
+    def _fork(self,_fun):
+			t=threading.Thread(target=_fun)
+			t.start()
 
     def connectVPN(self):
 			flag = os.path.isfile('/var/run/vpnc/pid')
 			if flag:
-					self.Menu.removeAction(self.appconnect)
 					self.appdisconnected = self.Menu.addAction('Disconnect')
 					self.connect(self.appdisconnected,QtCore.SIGNAL('triggered()'),self.disconnected)
 			else:
+					self.Menu.removeAction(self.appconnect)
 					os.system('vpnc')
 					self.connectVPN()
 
@@ -36,7 +44,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 			if flag:
 					os.system('vpnc-disconnect')
 					self.appconnect = self.Menu.addAction('Connect')
-					self.connect(self.appconnect,QtCore.SIGNAL('triggered()'),self.connectVPN)
+					self.appconnect.triggered.connect(lambda:self._fork(self.connectVPN))
 					self.Menu.removeAction(self.appdisconnected)
 			else:
 					pass
