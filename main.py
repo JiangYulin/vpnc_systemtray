@@ -45,9 +45,10 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
         sys.exit()
 
 if __name__ == "__main__":
+    if os.geteuid() != 0:
+        print "This program must be run as root.Aborting."
+        sys.exit(1)
     app = QtGui.QApplication(sys.argv)
-
     trayIcon = SystemTrayIcon()
     trayIcon.show()
-
     sys.exit(app.exec_())
