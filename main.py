@@ -2,6 +2,7 @@
 import sys
 import os
 import threading
+import pynotify
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -34,6 +35,7 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 			if flag:
 					self.appdisconnected = self.Menu.addAction('Disconnect')
 					self.connect(self.appdisconnected,QtCore.SIGNAL('triggered()'),self.disconnected)
+					self._notification("vpn connected!")
 			else:
 					self.Menu.removeAction(self.appconnect)
 					os.system('vpnc')
@@ -48,6 +50,11 @@ class SystemTrayIcon(QtGui.QSystemTrayIcon):
 					self.Menu.removeAction(self.appdisconnected)
 			else:
 					pass
+
+    def _notification(self,message):
+	    pynotify.init("Notify")
+	    noti = pynotify.Notification(message)
+	    noti.show()
 
     def appExit(self):
         sys.exit()
